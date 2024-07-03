@@ -27,7 +27,7 @@ To run the application, you need to have the following tools installed on your m
 
 ```bash
 docker run
--e BASE_URL=http://hiring.axreng.com/
+-e BASE_URL=http://github.com/
 -p 4567:4567 --rm axreng/backend
 ```
 

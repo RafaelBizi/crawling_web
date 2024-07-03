@@ -43,13 +43,13 @@ public class CrawlerImplCompTest {
         Keyword keyword = new Keyword("manual");
         Crawl crawl = new Crawl(new CopyOnWriteArrayList<>());
         HttpRequest requestHome
-                = HttpRequest.newBuilder().uri(new URI("http://hiring.axreng.com/")).build();
+                = HttpRequest.newBuilder().uri(new URI("http://github.com/")).build();
         HttpRequest requestManpageIndex
-                = HttpRequest.newBuilder().uri(new URI("http://hiring.axreng.com/manpageindex.html")).build();
+                = HttpRequest.newBuilder().uri(new URI("http://github.com/manpageindex.html")).build();
         HttpRequest requestIndex
-                = HttpRequest.newBuilder().uri(new URI("http://hiring.axreng.com/index.html")).build();
+                = HttpRequest.newBuilder().uri(new URI("http://github.com/index.html")).build();
         HttpRequest requestIndex1
-                = HttpRequest.newBuilder().uri(new URI("http://hiring.axreng.com/index1.html")).build();
+                = HttpRequest.newBuilder().uri(new URI("http://github.com/index1.html")).build();
         String homeHtml
                 = new String(Files.readAllBytes(Paths.get(
                 "src/test/resources/com.axreng.backend.infrastructure.stubb/HomeHiringAxreng.html")));
@@ -72,9 +72,9 @@ public class CrawlerImplCompTest {
         // Then
         assertThat(
                 crawl.getUrls(),
-                hasItems("http://hiring.axreng.com/",
-                        "http://hiring.axreng.com/index.html",
-                        "http://hiring.axreng.com/index1.html"));
+                hasItems("http://github.com/",
+                        "http://github.com/index.html",
+                        "http://github.com/index1.html"));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CrawlerImplCompTest {
         Keyword keyword = new Keyword("manual");
         Crawl crawl = new Crawl(new CopyOnWriteArrayList<>());
         HttpRequest requestHome
-                = HttpRequest.newBuilder().uri(new URI("http://hiring.axreng.com/")).build();
+                = HttpRequest.newBuilder().uri(new URI("http://github.com/")).build();
         String testHtml
                 = new String(Files.readAllBytes(Paths.get(
                 "src/test/resources/com.axreng.backend.infrastructure.stubb/NotExistsManualKeyword.html")));
