@@ -3,9 +3,11 @@
 ## Description
 
 This project is a web application that performs the functionality of crawling. It uses the Breadth-First Search (BFS) algorithm to perform breadth search. The application was built following the principles of SOLID, Clean Code, Clean Architecture and DDD (Domain-Driven Design).
+
 ## Technologies and Languages
 
 The project was developed using the following technologies and languages:
+
 - Java: Programming language used to develop the application.
 - Spark: Web framework used to create the REST API.
 - Gson: Library used to serialize and deserialize JSON objects.
@@ -23,11 +25,8 @@ docker build . -t axreng/backend
 
 ## How to run the application
 
-To run the application, you need to have the following tools installed on your machine, where "BASE_URL" is the URL of the website you want to crawl:
+To run the application, you need to have the following tools installed on your machine, where "BASE_URL" is the URL of the website you want to crawlbash
 
 ```bash
-docker run
--e BASE_URL=http://hiring.axreng.com/
--p 4567:4567 --rm axreng/backend
+docker run -e BASE_URL=http://hiring.axreng.com/ -p 4567:4567 --rm axreng/backend
 ```
-
