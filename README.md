@@ -18,7 +18,7 @@ The project was developed using the following technologies and languages:
 To build the application, you need to have the following tools installed on your machine:
 
 ```bash
-docker build . -t axreng/backend
+docker build . -t crawling/backend
 ```
 
 ## How to run the application
@@ -26,8 +26,6 @@ docker build . -t axreng/backend
 To run the application, you need to have the following tools installed on your machine, where "BASE_URL" is the URL of the website you want to crawl:
 
 ```bash
-docker run
--e BASE_URL=http://hiring.axreng.com/
--p 4567:4567 --rm axreng/backend
+docker run -e BASE_URL=https://github.com/RafaelBizi/crawling_web -p 4567:4567 --rm crawling/backend
 ```
 
