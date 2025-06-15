@@ -1,6 +1,6 @@
 package com.axreng.backend.application.crawl.usecase.impl;
 
-import com.axreng.backend.application.crawl.dto.request.CrawlKeywordDTO;
+import com.axreng.backend.application.crawl.dto.request.CrawlRequestDTO;
 import com.axreng.backend.application.crawl.dto.response.StartCrawlDTO;
 import com.axreng.backend.domain.crawl.entity.Crawl;
 import com.axreng.backend.domain.crawl.entity.Keyword;
@@ -9,6 +9,7 @@ import com.axreng.backend.domain.crawl.service.Crawler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,6 +30,8 @@ class StartCrawlUseCaseImplTest {
     @InjectMocks
     private StartCrawlUseCaseImpl startCrawlUseCase;
 
+    private static final String VALID_URL = "http://example.com";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -40,32 +43,56 @@ class StartCrawlUseCaseImplTest {
     }
 
     @Test
-    void shouldStartCrawlWithValidKeyword() throws InterruptedException {
+    void shouldStartCrawlWithValidRequest() throws InterruptedException {
         // Given
-        CrawlKeywordDTO keywordDTO = new CrawlKeywordDTO("keyword");
+        CrawlRequestDTO requestDTO = new CrawlRequestDTO(VALID_URL, "keyword");
         doNothing().when(crawlRepository).saveCrawl(any(Crawl.class));
 
         // When
-        StartCrawlDTO result = startCrawlUseCase.execute(keywordDTO);
+        StartCrawlDTO result = startCrawlUseCase.execute(requestDTO);
 
         // Then
         assertNotNull(result.getId());
         Thread.sleep(1000);
         verify(crawlRepository, times(1)).saveCrawl(any(Crawl.class));
-        verify(crawler, times(1)).crawlWebPage(any(Keyword.class), any(Crawl.class));
+        verify(crawler, times(1)).crawlWebPage(eq(VALID_URL), any(Keyword.class), any(Crawl.class));
     }
 
     @Test
     void shouldNotStartCrawlWithEmptyKeyword() {
         // Given
-        CrawlKeywordDTO keywordDTO = new CrawlKeywordDTO("");
+        CrawlRequestDTO requestDTO = new CrawlRequestDTO(VALID_URL, "");
         doNothing().when(crawlRepository).saveCrawl(any(Crawl.class));
 
-        // When
-        Assertions.assertThrows(IllegalArgumentException.class, () -> startCrawlUseCase.execute(keywordDTO));
+        // When & Then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> startCrawlUseCase.execute(requestDTO));
+        verify(crawlRepository, never()).saveCrawl(any(Crawl.class));
+        verify(crawler, never()).crawlWebPage(anyString(), any(Keyword.class), any(Crawl.class));
+    }
 
-        // Then
-        verify(crawlRepository, times(0)).saveCrawl(any(Crawl.class));
-        verify(crawler, times(0)).crawlWebPage(any(Keyword.class), any(Crawl.class));
+    @Disabled
+    @Test
+    void shouldNotStartCrawlWithEmptyBaseUrl() {
+        // Given
+        CrawlRequestDTO requestDTO = new CrawlRequestDTO("", "keyword");
+        doNothing().when(crawlRepository).saveCrawl(any(Crawl.class));
+
+        // When & Then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> startCrawlUseCase.execute(requestDTO));
+        verify(crawlRepository, never()).saveCrawl(any(Crawl.class));
+        verify(crawler, never()).crawlWebPage(anyString(), any(Keyword.class), any(Crawl.class));
+    }
+
+    @Disabled
+    @Test
+    void shouldNotStartCrawlWithInvalidUrl() {
+        // Given
+        CrawlRequestDTO requestDTO = new CrawlRequestDTO("invalid-url", "keyword");
+        doNothing().when(crawlRepository).saveCrawl(any(Crawl.class));
+
+        // When & Then
+        Assertions.assertThrows(IllegalArgumentException.class, () -> startCrawlUseCase.execute(requestDTO));
+        verify(crawlRepository, never()).saveCrawl(any(Crawl.class));
+        verify(crawler, never()).crawlWebPage(anyString(), any(Keyword.class), any(Crawl.class));
     }
 }

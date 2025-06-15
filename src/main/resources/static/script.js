@@ -11,8 +11,15 @@ const LOADING_MESSAGES = [
 
 function startCrawl() {
     const keyword = document.getElementById('keyword').value;
+    const baseUrl = document.getElementById('baseUrl').value;
+
     if (!keyword || keyword.length < 4 || keyword.length > 32) {
         showError('A palavra-chave deve ter entre 4 e 32 caracteres');
+        return;
+    }
+
+    if (!baseUrl || !isValidUrl(baseUrl)) {
+        showError('Por favor, insira uma URL válida');
         return;
     }
 
@@ -24,7 +31,10 @@ function startCrawl() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ keyword: keyword })
+        body: JSON.stringify({ 
+            baseUrl: baseUrl,
+            keyword: keyword 
+        })
     })
     .then(response => {
         if (!response.ok) {
@@ -42,6 +52,15 @@ function startCrawl() {
     .catch(error => {
         showError('Erro ao conectar com o servidor');
     });
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
 }
 
 function resetSearch() {

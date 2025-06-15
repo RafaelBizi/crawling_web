@@ -41,16 +41,17 @@ public class CrawlerImpl implements Crawler {
         this.httpClientRepository = httpClientRepository;
     }
 
-    public void crawlWebPage(Keyword keyword, Crawl crawl) {
-        LOG.info("Crawling started for keyword: {}, id: {}", keyword.getValue(), crawl.getId());
+    @Override
+    public void crawlWebPage(String baseUrl, Keyword keyword, Crawl crawl) {
+        LOG.info("Crawling started for keyword: {}, baseUrl: {}, id: {}",
+                keyword.getValue(), baseUrl, crawl.getId());
 
         Queue<String> queue = new ConcurrentLinkedQueue<>();
         Set<String> visited = Collections.synchronizedSet(new LinkedHashSet<>());
         Set<String> addedToQueue = Collections.synchronizedSet(new LinkedHashSet<>());
 
-        queue.add(BASE_URL);
-        visited.add(BASE_URL);
-        addedToQueue.add(BASE_URL);
+        queue.add(baseUrl);
+        addedToQueue.add(baseUrl);
 
         List<Future<?>> futures = new ArrayList<>();
 
@@ -62,12 +63,20 @@ public class CrawlerImpl implements Crawler {
                     futures.add(executorService.submit(() -> {
                         try {
                             retryStrategy.execute(() -> {
+                                // Movido para depois da verificação do conteúdo
+                                if (visited.contains(currentUrl)) {
+                                    return null;
+                                }
+
                                 HttpRequest request = HttpRequest.newBuilder()
                                         .uri(new URI(currentUrl))
                                         .build();
                                 HttpResponse<String> response = httpClientRepository.send(request);
 
                                 String responseBodyLowerCase = response.body().toLowerCase();
+
+                                // Adiciona à lista de visitados após obter o conteúdo
+                                visited.add(currentUrl);
 
                                 if (responseBodyLowerCase.contains(keyword.getValue().toLowerCase())) {
                                     crawl.getUrls().add(currentUrl);
@@ -79,7 +88,7 @@ public class CrawlerImpl implements Crawler {
                                     href = href.replaceAll(HTML_TAG_REGEX, "");
 
                                     if (isValidHref(href)) {
-                                        href = BASE_URL + href;
+                                        href = baseUrl + href;
 
                                         if (isValidUrl(href) && !visited.contains(href) && addedToQueue.add(href)) {
                                             queue.add(href);
@@ -88,7 +97,6 @@ public class CrawlerImpl implements Crawler {
                                 }
                                 return null;
                             });
-
                         } catch (Exception e) {
                             LOG.error("Error while crawling: {}", e.getMessage());
                         } finally {
@@ -101,8 +109,7 @@ public class CrawlerImpl implements Crawler {
             }
         }
 
-        for (
-                Future<?> future : futures) {
+        for (Future<?> future : futures) {
             try {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {

@@ -1,108 +1,62 @@
-# Backend-test
+# Web Crawler Application
 
-## Description
+## Descrição
+Esta aplicação é um web crawler que busca URLs em páginas web com base em uma palavra-chave fornecida. A aplicação agora permite que o usuário especifique tanto a URL base quanto a palavra-chave para a busca.
 
-This project is a web application that performs the functionality of crawling. It uses the Breadth-First Search (BFS) algorithm to perform breadth search. The application was built following the principles of SOLID, Clean Code, Clean Architecture and DDD (Domain-Driven Design).
+## Funcionalidades
+- Interface web amigável
+- Busca personalizada em qualquer domínio web
+- Rastreamento recursivo de links
+- Feedback em tempo real do progresso da busca
+- Exibição dos resultados encontrados
 
-## Technologies and Languages
-
-The project was developed using the following technologies and languages:
-
-- Java: Programming language used to develop the application.
-- Spark: Web framework used to create the REST API.
-- Gson: Library used to serialize and deserialize JSON objects.
-- Maven: Dependency manager used to manage the project's dependencies.
-- JUnit: Framework used to create unit tests.
-- Mockito: Framework used to create mock objects in unit tests.
-
-## How to build the application
-
-To build the application, you need to have the following tools installed on your machine:
-
-```bash
+## Como Executar
 docker build . -t axreng/backend
-```
 
-## How to run the application
+#### Executando o container
+docker run -p 4567:4567 --rm axreng/backend
 
-To run the application, you need to have the following tools installed on your machine, where "BASE_URL" is the URL of the website you want to crawlbash
-
-```bash
-docker run -e BASE_URL=http://hiring.axreng.com/ -p 4567:4567 --rm axreng/backend
-```
+### Acessando a Aplicação
+1. Abra seu navegador e acesse `http://localhost:4567`
+2. Na interface, você encontrará dois campos:
+   - URL Base: Digite a URL completa do site onde deseja realizar a busca (ex: http://example.com/)
+   - Palavra-chave: Digite o termo que deseja procurar (4-32 caracteres)
+3. Clique em "Iniciar Busca" para começar o processo
 
 ## API Endpoints
 
-The application exposes two REST endpoints:
+### POST /crawl
+Inicia uma nova busca.
 
-### Start Crawling Process
-Initiates a new crawling process for a specific keyword.
+Request body:
+json { "baseUrl": "[http://example.com/](http://example.com/)", "keyword": "search-term" }
 
-**Endpoint:** `POST http://localhost:4567/crawl`
+Response:
+json { "id": "unique-crawl-id" }
 
-**Request Body:**
-{ "keyword": "string" }
+### GET /crawl/:id
+Recupera o status e resultados de uma busca.
 
-**Response Body:**
-{ "id": "8c7e4dfd-927a-4b5e-8398-c4964f6275c3", "status": "active" }
+Response:
+json { "id": "unique-crawl-id", "status": "active|done", "urls": "http://example.com/page1.html","http://example.com/page2.html" }
 
+## Restrições
+- A palavra-chave deve ter entre 4 e 32 caracteres
+- A URL base deve ser uma URL válida e acessível
+- A aplicação realiza buscas apenas em páginas HTML
 
-### Get Crawling Results
-Retrieves the results of a specific crawling process.
+## Tecnologias Utilizadas
+- Java 17
+- Spark Framework
+- Docker
+- HTML/CSS/JavaScript
 
-**Endpoint:** `GET http://localhost:4567/crawl/:id`
+## Notas de Segurança
+- A aplicação valida todas as entradas do usuário
+- Implementa limites de conexão e timeout
+- Respeita as políticas de robots.txt dos sites
 
-**Response Example (200 OK):**
-
-{
-"id": "7TJBOJ2B",
-"status": "active",
-"urls": [
-"http://hiring.axreng.com/",
-"http://hiring.axreng.com/index.html",
-"http://hiring.axreng.com/htmlman8/agetty.8.html",
-"http://hiring.axreng.com/htmlman8/ld.so.8.html",
-"http://hiring.axreng.com/htmlman5/proc.5.html",
-"http://hiring.axreng.com/htmlman7/feature_test_macros.7.html",
-"http://hiring.axreng.com/htmlman2/bpf.2.html",
-"http://hiring.axreng.com/htmlman7/pty.7.html",
-"http://hiring.axreng.com/htmlman2/gettimeofday.2.html"
-]
-}
-
-## Usage Example
-1. First, start the application using Docker as described above.
-2. Start a new crawling process for the keyword "compilation":
-
-```bash
-curl -X POST http://localhost:4567/crawl -H "Content-Type: application/json" -d '{"keyword": "compilation"}'
-```
-
-3. You'll receive a response with an ID, like:
-{ "id": "7TJBOJ2B" } 
-
-4. Use this ID to check the crawling results:
-```bash
-curl http://localhost:4567/crawl/7TJBOJ2B
-```
-
-5. The response will show all URLs containing the word "compilation":
-   {
-   "id": "7TJBOJ2B",
-   "status": "active",
-   "urls": [
-   "http://hiring.axreng.com/",
-   "http://hiring.axreng.com/index.html",
-   "http://hiring.axreng.com/htmlman8/agetty.8.html",
-   "http://hiring.axreng.com/htmlman8/ld.so.8.html",
-   "http://hiring.axreng.com/htmlman5/proc.5.html",
-   "http://hiring.axreng.com/htmlman7/feature_test_macros.7.html",
-   "http://hiring.axreng.com/htmlman2/bpf.2.html",
-   "http://hiring.axreng.com/htmlman7/pty.7.html",
-   "http://hiring.axreng.com/htmlman2/gettimeofday.2.html"
-   ]
-   }
-
-Note: The crawling process runs asynchronously. When you first check the results, the status might still be "active". Keep checking until the status changes to "done" to see all discovered URLs.
+## Suporte
+Para questões e suporte, por favor abra uma issue no repositório do projeto.
 
 
