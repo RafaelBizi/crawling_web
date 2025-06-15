@@ -16,12 +16,15 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 import static spark.Spark.port;
+import static spark.Spark.staticFiles;
 
 public class Main {
 
     public static final int PORT = 4567;
 
     public static void main(String[] args) {
+        staticFiles.location("/static");
+
 
         port(PORT);
         HttpClient httpClient = HttpClient.newBuilder()

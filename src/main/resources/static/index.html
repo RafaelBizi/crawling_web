@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Crawler</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Web Crawler</h1>
+        <p class="subtitle">Busque URLs relacionadas a qualquer palavra-chave</p>
+    </header>
+
+    <div class="search-box">
+        <div class="form-group">
+            <label for="keyword">Palavra-chave para busca:</label>
+            <input type="text"
+                   id="keyword"
+                   name="keyword"
+                   placeholder="Digite a palavra-chave..."
+                   required>
+        </div>
+
+        <button id="searchButton" class="primary-button" onclick="startCrawl()">
+            <span class="button-text">Iniciar Busca</span>
+            <span class="button-loader"></span>
+        </button>
+    </div>
+
+    <div class="loading-container" id="loading">
+        <div class="spinner"></div>
+        <div class="status-message">Inicializando busca...</div>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div id="results" class="results-container"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
